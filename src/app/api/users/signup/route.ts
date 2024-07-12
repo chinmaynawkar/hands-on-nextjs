@@ -7,18 +7,15 @@ export async function POST(req: NextRequest) {
     try {
         const reqBody = await req.json();
         const { username, email, password } = reqBody;
-
-        // Check if user already exists
+        
     const user = await UserModel.findOne({ email })
     if (user) {
         return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
-    // Hash password
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    // Create new user
     const newUser = new UserModel({
         username,
         email,
