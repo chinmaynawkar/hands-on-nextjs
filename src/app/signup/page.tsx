@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { axios } from "axios";
+import  axios from "axios";
 
 export default function SignupPage() {
     const router = useRouter();
@@ -13,8 +13,23 @@ export default function SignupPage() {
       password: '',
     })
     const [buttonDisabled, setButtonDisabled] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const onSignup = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.post("/api/users/signup", user);
+        console.log('Signup Success', response.data);
+
+        if (response.data.success) {
+          router.push("/login");
+        }
+      } catch (error) {
+        console.error(error);
+        console.log("Error signing up");
+      } finally {
+        setLoading(false);
+      }
 
     }
 

@@ -1,4 +1,4 @@
-import { model, Schema, Document } from "mongoose";
+import { model, Schema, Document, models } from "mongoose";
 
 export interface User extends Document {
   username: string;
@@ -19,7 +19,7 @@ const userSchema = new Schema<User>({
   },
   email: {
     type: String,
-    required: [ true, "Email is required"],
+    required: [true, "Email is required"],
     unique: true,
   },
   password: {
@@ -40,4 +40,4 @@ const userSchema = new Schema<User>({
   verifyTokenExpires: Date,
 });
 
-export const UserModel = model<User>("User", userSchema);
+export const UserModel = models.User || model<User>("User", userSchema);
