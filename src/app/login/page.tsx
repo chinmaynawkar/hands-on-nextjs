@@ -1,19 +1,42 @@
 
 'use client'
 import Link from 'next/link'
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { axios } from "axios";
+import  axios  from "axios";
 
 export default function LoginPage() {
+    const router = useRouter();
     const [user, setUser] = React.useState({
         email: '',
         password: '',
     })
 
+    const [buttonDisabled, setButtonDisabled] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
     const onLogin = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.post("/api/users/login", user);
+            console.log('Login Success', response.data);
+
+            if (response.data.success) {
+                router.push("/profile");
+            }
+        } catch (error) {
+            console.error(error);
+            console.log("Error logging in");
+        } finally {
+            setLoading(false);
+        }
 
     }
+
+    useEffect(() => {
+        setButtonDisabled(user.email.length === 0 || user.password.length === 0);
+    }, [ user])
+    
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-black text-white">
     <nav className="absolute top-0 left-0 w-full flex justify-between p-4">
@@ -24,7 +47,7 @@ export default function LoginPage() {
         </div>
     </nav>
     <div className="w-full max-w-md p-8 bg-gray-800 rounded-md">
-        <h1 className="text-2xl font-bold mb-8 text-center">Login</h1>
+        <h1 className="text-2xl font-bold mb-8 text-center">loading ? {loading ? "Authenticating" : "Login"}</h1>
         <label htmlFor="email" className="block mb-2">Email</label>
         <input
             className="w-full p-2 mb-4 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-gray-400"
